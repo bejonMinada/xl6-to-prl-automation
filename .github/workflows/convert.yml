@@ -1,0 +1,33 @@
+name: Convert XL6 to PRL
+
+on:
+  repository_dispatch:
+    types: [convert-xl6]
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+
+      - name: Install dependencies
+        run: pip install pandas openpyxl
+
+      - name: Run conversion
+        run: |
+          python xl6_to_prl_converter.py input/file.xl6 output/file.prl
+
+      - name: Commit output
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add output/
+          git commit -m "Add converted PRL file"
+          git push
